@@ -1,0 +1,110 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", sans-serif;
+}
+
+body {
+    height: 100vh;
+    background: linear-gradient(135deg, #0a2342, #142850);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Signup Box */
+.signup-box {
+    width: 100%;
+    max-width: 420px;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 14px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    text-align: center;
+}
+
+/* Heading */
+.signup-box h2 {
+    color: #0a2342;
+    margin-bottom: 15px;
+}
+
+/* Input Groups */
+.input-group {
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 11px;
+    margin-top: 6px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #0a2342;
+}
+
+/* OTP Timer */
+#timer {
+    font-size: 13px;
+    margin-top: 6px;
+    color: #555;
+}
+
+/* Buttons */
+button {
+    width: 100%;
+    background: #0a2342;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+button:hover {
+    background: #142850;
+}
+
+/* Resend Button */
+#resendBtn {
+    background: transparent;
+    color: #0a2342;
+    border: 1px solid #0a2342;
+    margin-top: 8px;
+}
+
+#resendBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Password Strength */
+#strength {
+    display: block;
+    margin-top: 6px;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .signup-box {
+        margin: 15px;
+        padding: 20px;
+    }
+}

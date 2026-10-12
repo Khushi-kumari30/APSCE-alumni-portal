@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Center | Alumni Portal</title>
+    <link rel="stylesheet" href="css/index3.css">
+    <link rel="stylesheet" href="css/career.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<!-- Top Header -->
+<div class="top-header">
+    <a href="index3.html" class="logo">
+        <i class="fa-solid fa-graduation-cap"></i> Alumni Portal
+    </a>
+    <div class="college-name">APS College of Engineering</div>
+    <div class="user-menu"></div>
+</div>
+
+<div class="layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <ul class="nav-links">
+        <li><a href="index3.html"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+        <li><a href="profile.html"><i class="fa-solid fa-user"></i> My Profile</a></li>
+        <li><a href="directory.html"><i class="fa-solid fa-users"></i> Alumni Directory</a></li>
+        <li><a href="Events.html"><i class="fa-solid fa-calendar-days"></i> Events & Reunions</a></li>
+        <li><a href="career.html" class="active"><i class="fa-solid fa-briefcase"></i> Career Center</a></li>
+        <li><a href="Achivement.html"><i class="fa-solid fa-trophy"></i> Achievements</a></li>
+        <li><a href="mentorship.html"><i class="fa-solid fa-handshake-angle"></i> Mentorship</a></li>
+        <li><a href="contact.html"><i class="fa-solid fa-envelope"></i> Contact Us</a></li>
+      </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="content">
+        <div class="directory-header career-header">
+            <div>
+                <h2><i class="fa-solid fa-briefcase"></i> Career Center</h2>
+                <p>Explore internal positions or automation pathways posted directly via our global network.</p>
+            </div>
+            
+            <!-- Dual Action Buttons -->
+            <div class="action-btn-group" style="display: flex; gap: 10px;">
+                <button class="connect-btn linkedin-sync-btn" onclick="openModal('linkedinModal')">
+                    <i class="fa-brands fa-linkedin"></i> Auto-Sync LinkedIn
+                </button>
+                <button class="connect-btn" onclick="openModal('jobModal')">
+                    <i class="fa-solid fa-plus"></i> Post Manually
+                </button>
+            </div>
+        </div>
+
+        <!-- Search & Filter Bar -->
+        <div class="filter-container">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="jobSearch" placeholder="Search by Job Title or Company..." onkeyup="filterJobs()">
+            </div>
+            <select class="filter-dropdown" id="typeFilter" onchange="filterJobs()">
+                <option value="all">All Types</option>
+                <option value="Full-time">Full-time</option>
+                <option value="Internship">Internship</option>
+                <option value="Contract">Contract</option>
+            </select>
+        </div>
+
+        <!-- Job List Container -->
+        <div class="job-list" id="jobList">
+            <!-- Populated Dynamically via Client JavaScript Fetch Engine Loop -->
+        </div>
+    </main>
+</div>
+
+<!-- Global Modal Overlay -->
+<div id="modalOverlay" class="modal-overlay" onclick="closeAllModals()"></div>
+
+<!-- MODAL 1: Manual Post Form Modal -->
+<div id="jobModal" class="modal">
+    <div class="modal-header">
+        <h2>Post New Opportunity Manually</h2>
+        <button class="close-icon-btn" onclick="closeAllModals()">&times;</button>
+    </div>
+    <div class="modal-body">
+        <form id="jobForm" class="event-form">
+            <div class="field">
+                <label>Job Title</label>
+                <input type="text" id="jobTitle" placeholder="e.g. Frontend Developer" required>
+            </div>
+            <div class="field">
+                <label>Company Name</label>
+                <input type="text" id="companyName" placeholder="e.g. Microsoft" required>
+            </div>
+            <div class="row">
+                <div class="field">
+                    <label>Job Type</label>
+                    <select id="jobType" class="filter-dropdown" style="width: 100%; height: 45px;">
+                        <option value="Full-time">Full-time</option>
+                        <option value="Internship">Internship</option>
+                        <option value="Contract">Contract</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Location</label>
+                    <input type="text" id="location" placeholder="e.g. Remote or Bengaluru">
+                </div>
+            </div>
+            <div class="field">
+                <label>Job Description / Referral Link</label>
+                <textarea id="jobDesc" rows="4" placeholder="Briefly describe the role or paste the application link..." required></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeAllModals()">Cancel</button>
+                <button type="submit" class="connect-btn">Post Opportunity</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL 2: LinkedIn Automation Controller Modal -->
+<div id="linkedinModal" class="modal">
+    <div class="modal-header">
+        <h2>LinkedIn Feed Automation</h2>
+        <button class="close-icon-btn" onclick="closeAllModals()">&times;</button>
+    </div>
+    <div class="modal-body">
+        <div class="linkedin-sync-container">
+            <div class="sync-icon"><i class="fa-brands fa-linkedin"></i></div>
+            <h3>Link Your Timeline Feed</h3>
+            <p>Connect your account once. Our framework will scan your profile feed for <strong>#hiring</strong>, <strong>#job</strong>, or <strong>#referral</strong> hashtags and render them here without manual work.</p>
+            
+            <div class="sync-status" id="syncStatus">
+                <span class="status-badge status-disconnected">Status: Unlinked</span>
+            </div>
+            
+            <button class="btn-linkedin-auth" id="syncBtn" onclick="triggerLinkedInOAuth()">
+                <i class="fa-brands fa-linkedin-in"></i> Link Account Identity
+            </button>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn-secondary" onclick="closeAllModals()" style="width: 100%;">Close Configuration Panel</button>
+    </div>
+</div>
+
+<!-- MODAL 3: Detailed Job View Panel -->
+<div id="viewJobModal" class="modal">
+    <div class="modal-header">
+        <h2 id="viewJobTitle">Position Details</h2>
+        <button class="close-icon-btn" onclick="closeAllModals()">&times;</button>
+    </div>
+    <div class="modal-body">
+        <h4 id="viewJobCompany" style="color: var(--accent-color); font-size: 16px; margin-bottom: 12px; font-weight: 600;"></h4>
+        <div style="background: var(--bg-light); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);">
+            <p id="viewJobDesc" style="white-space: pre-line; color: var(--text-main); font-size: 14px; line-height: 1.6;"></p>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn-secondary" onclick="closeAllModals()" style="width: 100%;">Close Window</button>
+    </div>
+</div>
+
+<script>
+    const overlay = document.getElementById('modalOverlay');
+
+    // 1. DYNAMICALLY LOAD ENTRIES ON PAGE INITIALIZATION
+    document.addEventListener("DOMContentLoaded", () => {
+        loadJobsFromDatabase();
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('sync') === 'true') {
+            alert("Success! Your LinkedIn timeline automation architecture is now active.");
+            document.getElementById('syncStatus').innerHTML = '<span class="status-badge status-connected">Status: Syncing Active</span>';
+            const syncBtn = document.getElementById('syncBtn');
+            syncBtn.className = "btn-linkedin-auth connected";
+            syncBtn.innerHTML = '<i class="fa-solid fa-check"></i> Connected';
+        }
+    });
+
+    function loadJobsFromDatabase() {
+        fetch('http://localhost:5000/api/jobs')
+            .then(res => res.json())
+            .then(jobs => {
+                const container = document.getElementById('jobList');
+                container.innerHTML = "";
+
+                if (jobs.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: var(--text-muted); width: 100%;">
+                            <i class="fa-solid fa-folder-open" style="font-size: 48px; margin-bottom: 10px; color: #cbd5e1;"></i>
+                            <p>No job opportunities found matching this catalog layer yet.</p>
+                        </div>`;
+                    return;
+                }
+
+                jobs.forEach(job => {
+                    const isLinkedIn = job.source === 'linkedin';
+                    const timeAgo = new Date(job.created_at).toLocaleDateString();
+                    
+                    // Securely sanitize quotes and linebreaks to pass into our view injector function safely
+                    const cleanDesc = job.description
+                        .replace(/\\/g, '\\\\')
+                        .replace(/`/g, '\\`')
+                        .replace(/'/g, "\\'")
+                        .replace(/"/g, '&quot;')
+                        .replace(/\n/g, '\\n')
+                        .replace(/\r/g, '\\r');
+
+                    const cardHTML = `
+                        <div class="job-card" data-type="${job.job_type}">
+                            <div class="job-info">
+                                <div class="company-logo ${isLinkedIn ? 'linkedin-themed-logo' : ''}">
+                                    <i class="fa-solid ${isLinkedIn ? 'fa-brands fa-linkedin-in' : 'fa-building'}"></i>
+                                </div>
+                                <div class="job-details">
+                                    <h3>${job.title}</h3>
+                                    <p class="company-name">${job.company} • ${job.location || 'N/A'}</p>
+                                    <div class="job-meta">
+                                        <span class="tag tag-intern">${job.job_type}</span>
+                                        <span class="post-date"><i class="fa-regular fa-clock"></i> ${timeAgo}</span>
+                                        <span class="source-badge ${isLinkedIn ? 'external' : 'internal'}">
+                                            <i class="fa-solid ${isLinkedIn ? 'fa-brands fa-linkedin' : 'fa-circle-check'}"></i> 
+                                            ${isLinkedIn ? 'Via LinkedIn Sync' : 'Internal Post'}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="job-actions">
+                                <button class="btn-secondary" onclick="showFullJobDescription(\`${job.title}\`, \`${job.company}\`, \`${cleanDesc}\`)">View Details</button>
+                                <a href="${job.application_link || '#'}" target="_blank" class="connect-btn ${isLinkedIn ? 'linkedin-sync-btn' : ''}" style="text-decoration:none;">
+                                    ${isLinkedIn ? '<i class="fa-solid fa-arrow-up-right-from-square"></i> Open LinkedIn' : 'Apply Now'}
+                                </a>
+                            </div>
+                        </div>`;
+                    container.innerHTML += cardHTML;
+                });
+            })
+            .catch(err => console.error("Error loading structural job feed matrix:", err));
+    }
+
+    // 2. MODAL LAYER CONTROLLER UTILS
+    function openModal(modalId) {
+        document.getElementById(modalId).classList.add('active');
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeAllModals() {
+        document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+        overlay.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+
+    function showFullJobDescription(title, company, description) {
+        document.getElementById('viewJobTitle').innerText = title;
+        document.getElementById('viewJobCompany').innerText = company;
+        document.getElementById('viewJobDesc').innerText = description;
+        openModal('viewJobModal');
+    }
+
+    // 3. SECURE MANUAL FORM INGESTION INTERCEPTOR
+    document.getElementById('jobForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert("Your authentication session has expired. Please log back in.");
+            return;
+        }
+        
+        const payload = {
+            title: document.getElementById('jobTitle').value,
+            company: document.getElementById('companyName').value,
+            job_type: document.getElementById('jobType').value,
+            location: document.getElementById('location').value,
+            description: document.getElementById('jobDesc').value,
+            application_link: ""
+        };
+
+        fetch('http://localhost:5000/api/jobs/manual', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert("Opportunity posted successfully under internal listings!");
+                document.getElementById('jobForm').reset();
+                closeAllModals();
+                loadJobsFromDatabase(); 
+            } else {
+                alert("Error posting opportunity: " + data.error);
+            }
+        })
+        .catch(err => console.error("Manual insertion pipeline dropped:", err));
+    });
+
+    // 4. SECURE INITIATION FOR LINKEDIN GATEWAY
+    function triggerLinkedInOAuth() {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert("Please log in to pass verification tokens securely.");
+            return;
+        }
+        window.location.href = `http://localhost:5000/api/auth/linkedin?token=${token}`;
+    }
+
+    // 5. LIVE SEARCH MATCH MATRIX FILTER
+    function filterJobs() {
+        const searchInput = document.getElementById('jobSearch').value.toLowerCase();
+        const typeFilter = document.getElementById('typeFilter').value;
+        const cards = document.getElementsByClassName('job-card');
+
+        for (let card of cards) {
+            const title = card.querySelector('.job-details h3').innerText.toLowerCase();
+            const company = card.querySelector('.company-name').innerText.toLowerCase();
+            const cardType = card.getAttribute('data-type');
+
+            const matchesSearch = title.includes(searchInput) || company.includes(searchInput);
+            const matchesType = typeFilter === 'all' || cardType === typeFilter;
+
+            if (matchesSearch && matchesType) {
+                card.style.display = "flex";
+            } else {
+                card.style.display = "none";
+            }
+        }
+    }
+</script>
+<script src="js/auth_check.js"></script>
+</body>
+</html>

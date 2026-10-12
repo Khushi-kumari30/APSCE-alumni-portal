@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | Alumni Portal</title>
+
+    <!-- Shared Stylesheets -->
+    <link rel="stylesheet" href="css/index3.css">
+    <link rel="stylesheet" href="css/contact.css">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<!-- Fixed Top Header -->
+<div class="top-header">
+    <a href="index3.html" class="logo">
+        <i class="fa-solid fa-graduation-cap"></i> Alumni Portal
+    </a>
+    <div class="college-name">APS College of Engineering</div>
+    <div class="user-menu">
+       <!--- <span class="welcome-text" id="userWelcomeText">Hi, User</span>
+        <button class="logout-btn">
+            <a href="login.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </button>
+    -->
+    </div>
+</div>
+
+<div class="layout">
+    <!-- Fixed Sidebar -->
+    <aside class="sidebar">
+      <ul class="nav-links">
+        <li><a href="index3.html"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+        <li><a href="profile.html"><i class="fa-solid fa-user"></i> My Profile</a></li>
+        <li><a href="directory.html"><i class="fa-solid fa-users"></i> Alumni Directory</a></li>
+        <li><a href="Events.html"><i class="fa-solid fa-calendar-days"></i> Events & Reunions</a></li>
+       <!-- <li><a href="career.html"><i class="fa-solid fa-briefcase"></i> Career Center</a></li>-->
+        <li><a href="Achivement.html"><i class="fa-solid fa-trophy"></i> Achievements</a></li>
+        <li><a href="mentorship.html"><i class="fa-solid fa-handshake-angle"></i> Mentorship</a></li>
+        <li><a href="contact.html" class="active"><i class="fa-solid fa-envelope"></i> Contact Us</a></li>
+      </ul>
+    </aside>
+
+    <!-- Main Scrollable Content -->
+    <main class="content">
+        <div class="gallery-header">
+            <div class="header-title-group">
+                <h2><i class="fa-solid fa-headset"></i> Get in Touch</h2>
+                <p class="header-subtitle">Have a question? We're here to help you connect with the campus.</p>
+            </div>
+        </div>
+
+        <!-- Contact Cards Grid -->
+        <div class="contact-grid">
+            <div class="card">
+                <h3><i class="fa-solid fa-user-tie"></i> Principal's Office</h3>
+                <p><strong>Dr. Dattatraya</strong></p>
+                <p>B.E, MTech, Ph.D, LMISTE</p>
+                <p><i class="fa-solid fa-phone"></i> +91 9448452508</p>
+                <p><i class="fa-solid fa-calendar-check"></i> Mon – Sat | 9:30 AM – 4:00 PM</p>
+            </div>
+
+            <div class="card">
+                <h3><i class="fa-solid fa-building-columns"></i> Administration</h3>
+                <p>Office Hours: 9:30 AM – 4:00 PM</p>
+                <p><i class="fa-solid fa-circle-info"></i> 1st & 3rd Saturday – Holiday</p>
+                <p><i class="fa-brands fa-whatsapp"></i> +91 9XXXXXXXXX</p>
+            </div>
+
+            <div class="card">
+                <h3><i class="fa-solid fa-envelope-open-text"></i> Official Emails</h3>
+                <p><i class="fa-solid fa-at"></i> principal.apsce@gmail.com</p>
+                <p><i class="fa-solid fa-at"></i> apsceoffice@gmail.com</p>
+            </div>
+
+            <div class="card full-width">
+                <h3><i class="fa-solid fa-map-location-dot"></i> Campus Location</h3>
+                <p>APS College of Engineering, Kanakapura Road, Somanahalli, Bangalore – 560116</p>
+                
+                <div class="map-container">
+                    <iframe
+                        src="https://www.google.com/maps?q=APS%20College%20of%20Engineering%20Bangalore&output=embed"
+                        loading="lazy">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+
+        <!-- Integrated Footer -->
+        <footer class="portal-footer">
+            <div class="footer-sections">
+                <div class="footer-brand">
+                    <h4>APS College of Engineering</h4>
+                    <p>Building Excellence since 1958</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Quick Access</h4>
+                    <ul>
+                        <li><a href="index3.html">Home</a></li>
+                        <li><a href="https://www.apsce.ac.in/index.php/academics/admission" target="_blank">Admissions</a></li>
+                        <li><a href="Events.html">Events</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h4>Help Desk</h4>
+                    <p><i class="fa-solid fa-phone"></i> +91 9448452508</p>
+                    <p><i class="fa-solid fa-envelope"></i> apsceoffice@gmail.com</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 APS College of Engineering. All Rights Reserved.</p>
+            </div>
+        </footer>
+    </main>
+</div>
+
+<script>
+    // Initialize user data
+    document.addEventListener('DOMContentLoaded', () => {
+        const savedName = localStorage.getItem('alumniUserName');
+        if (savedName) {
+            document.getElementById('userWelcomeText').innerText = `Hi, ${savedName}`;
+        }
+    });
+</script>
+<script src="js/auth_check.js"></script>
+</body>
+</html>

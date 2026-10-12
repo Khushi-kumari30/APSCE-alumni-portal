@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Alumni Portal | Dashboard</title>
+    <link rel="stylesheet" href="css/index3.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<div class="top-header">
+    <a href="index3.html" class="logo">
+        <i class="fa-solid fa-graduation-cap"></i> Alumni Portal
+    </a>
+    <div class="college-name">APS College of Engineering</div>
+    
+    <div class="user-menu" id="userMenuSection" style="display: flex; align-items: center; gap: 15px; color: white; margin-right: 20px; font-family: sans-serif;">
+        
+        <div id="authBtnsContainer" class="auth-btns">
+            <button class="signup"><a href="register.html" style="text-decoration: none; color: inherit;">Signup</a></button>
+        </div>
+    </div>
+</div>
+
+<div class="layout">
+    <aside class="sidebar">
+      <ul class="nav-links">
+        <li>
+          <a href="index3.html" class="active">
+            <i class="fa-solid fa-house"></i> Dashboard 
+          </a>
+        </li>
+        <li>
+          <a href="profile.html">
+            <i class="fa-solid fa-user"></i> My Profile
+          </a>
+        </li>
+        <li>
+          <a href="directory.html">
+            <i class="fa-solid fa-users"></i> Alumni Directory 
+          </a>
+        </li>
+        <li>
+          <a href="Events.html">
+            <i class="fa-solid fa-calendar-days"></i> Events & Reunions
+          </a>
+        </li>
+        <li>
+          <a href="Achivement.html">
+            <i class="fa-solid fa-trophy"></i> Achievements
+          </a>
+        </li>
+        <li>
+          <a href="mentorship.html">
+            <i class="fa-solid fa-handshake-angle"></i> Mentorship
+          </a>
+        </li>
+        <li>
+          <a href="contact.html">
+            <i class="fa-solid fa-envelope"></i> Contact Us
+          </a>
+        </li>
+      </ul>
+    </aside>
+
+    <div class="content" style="padding: 30px; background-color: #f8fafc; flex: 1; height: calc(100vh - 60px); overflow-y: auto; box-sizing: border-box;">
+
+        <div class="slider">
+            <div class="slides active" style="background-image:url('images/apse1.jpeg')"></div>
+            <div class="slides" style="background-image:url('images/apse2.jpeg')"></div>
+            <div class="slides" style="background-image:url('images/apse4.jpeg')"></div>
+            <div class="slides" style="background-image:url('images/apse3.jpeg')"></div>
+
+            <div class="slider-text">
+                <h1 class="animate-text">Welcome to Alumni Portal</h1>
+                <p class="animate-sub">Our goal is to connect everyone</p>
+            </div>
+
+            <div class="dots">
+                <span class="active" onclick="setSlide(0)"></span>
+                <span onclick="setSlide(1)"></span>
+                <span onclick="setSlide(2)"></span>
+                <span onclick="setSlide(3)"></span>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="js/slider.js"></script>
+
+<script>
+// Synchronized Session Management Initialization Module
+document.addEventListener('DOMContentLoaded', () => {
+    const token = localStorage.getItem('alumniToken');
+    const savedName = localStorage.getItem('alumniUserName');
+    
+    const welcomeText = document.getElementById('userWelcomeText');
+    const logoutBtn = document.getElementById('headerLogoutBtn');
+    const authContainer = document.getElementById('authBtnsContainer');
+
+    if (token) {
+        // Logged-in profile render states
+        if (welcomeText) {
+            welcomeText.innerText = savedName ? `Hi, ${savedName}` : "Hi, User";
+            welcomeText.style.display = "inline-block";
+        }
+        if (logoutBtn) logoutBtn.style.display = "inline-flex";
+        if (authContainer) authContainer.style.display = "none";
+    } else {
+        // Logged-out guest fallback states
+        if (welcomeText) welcomeText.style.display = "none";
+        if (logoutBtn) logoutBtn.style.display = "none";
+        if (authContainer) authContainer.style.display = "block";
+    }
+});
+
+// Global Application Cache Clean Sign-out Engine
+function logout() {
+    localStorage.removeItem('alumniToken');
+    localStorage.removeItem('alumniUser');
+    localStorage.removeItem('alumniUserName');
+    localStorage.removeItem('alumniUserRole');
+    window.location.href = 'login.html';
+}
+</script>
+</body>
+</html>

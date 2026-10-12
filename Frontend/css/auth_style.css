@@ -1,0 +1,85 @@
+:root {
+    --primary-bg: #0f1c3f;
+    --card-bg: #ffffff;
+    --input-border: #d1d5db;
+    --btn-color: #0b1e3b;
+    --text-muted: #6b7280;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--primary-bg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.auth-container {
+    display: flex;
+    background: var(--card-bg);
+    border-radius: 15px;
+    overflow: hidden;
+    width: 900px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.auth-side-panel {
+    background-color: var(--primary-bg);
+    color: white;
+    padding: 60px;
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.auth-form-panel {
+    padding: 40px 60px;
+    width: 60%;
+}
+
+h2 { color: var(--btn-color); margin-bottom: 5px; }
+p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px; }
+
+.form-group { margin-bottom: 15px; }
+label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.85rem; }
+
+input, select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--btn-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.btn-secondary {
+    background: none;
+    border: 1px solid var(--input-border);
+    color: var(--btn-color);
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 5px;
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.85rem;
+}
+
+.auth-footer a { color: var(--btn-color); text-decoration: none; font-weight: bold; }

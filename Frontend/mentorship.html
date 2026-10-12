@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentorship | Alumni Portal</title>
+    <link rel="stylesheet" href="css/index3.css">
+    <link rel="stylesheet" href="css/mentorship.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div class="top-header">
+    <a href="index3.html" class="logo">
+        <i class="fa-solid fa-graduation-cap"></i> Alumni Portal
+    </a>
+    <div class="college-name">APS College of Engineering</div>
+    
+    <div class="user-menu" id="userMenu"></div>
+</div>
+
+<div class="layout">
+    <aside class="sidebar">
+      <ul class="nav-links">
+        <li><a href="index3.html" style="font-size: 17px;"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+        <li><a href="profile.html" style="font-size: 17px;"><i class="fa-solid fa-user"></i> My Profile</a></li>
+        <li><a href="directory.html" style="font-size: 17px;"><i class="fa-solid fa-users"></i> Alumni Directory</a></li>
+        <li><a href="Events.html" style="font-size: 17px;"><i class="fa-solid fa-calendar-days"></i> Events & Reunions</a></li>
+        <li><a href="Achivement.html" style="font-size: 17px;"><i class="fa-solid fa-trophy"></i> Achievements</a></li>
+        <li><a href="mentorship.html" class="active" style="font-size: 17px;"><i class="fa-solid fa-handshake-angle"></i> Mentorship</a></li>
+        <li><a href="contact.html" style="font-size: 17px;"><i class="fa-solid fa-envelope"></i> Contact Us</a></li>
+      </ul>
+    </aside>
+
+    <main class="content" style="padding: 30px; background-color: #f8fafc; flex: 1; height: calc(100vh - 65px); overflow-y: auto; box-sizing: border-box;">
+        
+        <div class="gallery-header">
+            <div class="header-title-group">
+                <h2><i class="fa-solid fa-handshake-angle"></i> Mentorship Program</h2>
+                <p class="header-subtitle">Connect with industry experts for career guidance and technical growth.</p>
+            </div>
+            <button class="connect-btn" onclick="openMentorModal('become')">
+                <i class="fa-solid fa-user-tie"></i> Become a Mentor
+            </button>
+        </div>
+
+        <div id="alumniNotificationPanel" style="display: none; margin-bottom: 30px; padding: 20px; background: #ffffff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); border: 1px solid #eef0f5;">
+            <h3 style="color: #1e1b4b; display: flex; align-items: center; gap: 10px; font-family: sans-serif; margin-bottom: 5px;">
+                <i class="fa-solid fa-bell" style="color: #4f46e5;"></i> Pending Student Requests
+            </h3>
+            <p style="color: #666; font-size: 13px; margin-bottom: 15px; font-family: sans-serif;">
+                The following students have requested your guidance. Click 'Accept & Contact Student' to review details and coordinate.
+            </p>
+            <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eef0f5;">
+            <div id="requestsNotificationContainer"></div>
+        </div>
+
+        <div class="filter-container">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="mentorSearch" placeholder="Search skills or names..." onkeyup="filterMentors()">
+            </div>
+            <div class="filter-tabs">
+                <button class="tab-btn active" onclick="filterByTag('all', this)">All</button>
+                <button class="tab-btn" onclick="filterByTag('DSA', this)">DSA</button>
+                <button class="tab-btn" onclick="filterByTag('Machine Learning', this)">ML</button>
+                <button class="tab-btn" onclick="filterByTag('System Design', this)">System Design</button>
+            </div>
+        </div>
+
+        <div class="mentor-grid" id="mentorGrid">
+            <div style="text-align: center; width: 100%; grid-column: 1/-1; padding: 40px; color: #666;" id="loadingSpinner">
+                <i class="fa-solid fa-spinner fa-spin" style="font-size: 24px; margin-bottom: 10px;"></i>
+                <p>Finding active mentors registered in your network...</p>
+            </div>
+        </div>
+    </main>
+</div>
+
+<div id="modalOverlay" class="modal-overlay" onclick="closeModal()"></div>
+<div id="mentorModal" class="modal">
+    <div class="modal-header">
+        <h2 id="modalTitle">Mentorship Request</h2>
+        <button class="close-btn" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+        <form id="mentorshipForm">
+            <div class="form-group">
+                <label>Focus Area</label>
+                <select id="focusArea" required style="box-sizing: border-box; width: 100%;">
+                    <option value="Technical Interview Prep">Technical Interview Prep</option>
+                    <option value="Career Path Guidance">Career Path Guidance</option>
+                    <option value="Resume Review">Resume Review</option>
+                </select>
+            </div>
+            <div class="form-group" style="margin-top: 15px;">
+                <label>Message</label>
+                <textarea id="mentorMessage" rows="4" placeholder="Briefly describe your goals..." required style="box-sizing: border-box; width: 100%;"></textarea>
+            </div>
+            <div class="modal-actions" style="margin-top: 20px; text-align: right;">
+                <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+                <button type="submit" class="btn-submit">Submit Request</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+let activeTabFilter = 'all';
+
+document.addEventListener('DOMContentLoaded', () => {
+    const token = localStorage.getItem('alumniToken');
+    const userRole = localStorage.getItem('alumniUserRole');
+
+    if (!token) { window.location.href = 'login.html'; return; }
+
+    const notificationPanel = document.getElementById('alumniNotificationPanel');
+
+    // Display incoming request cards strictly for users logged in as Alumni
+    if (userRole === 'alumni') {
+        notificationPanel.style.display = 'block';
+        fetchIncomingStudentRequests(token);
+    }
+
+    fetchMentors();
+});
+
+async function fetchIncomingStudentRequests(token) {
+    const container = document.getElementById('requestsNotificationContainer');
+
+    try {
+        const response = await fetch('http://localhost:5000/api/my-mentorship-requests', {
+            method: 'GET',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!response.ok) throw new Error("Could not pull network requests.");
+        const requests = await response.json();
+
+        if (requests.length === 0) {
+            container.innerHTML = `
+                <p style="color: #777; font-size: 14px; text-align: center; padding: 10px 0; font-family: sans-serif;">
+                    <i class="fa-solid fa-circle-check" style="color: #10b981; margin-right: 5px;"></i> You are all caught up! No pending student requests.
+                </p>`;
+            return;
+        }
+
+        container.innerHTML = ''; 
+        
+        requests.forEach(req => {
+            const rowHTML = `
+                <div id="request-card-${req.request_id}" style="position: relative; padding: 15px; border: 1px solid #eef0f5; border-radius: 6px; margin-bottom: 12px; background: #f9fafb; font-family: sans-serif;">
+                    <button onclick="dismissRequest(${req.request_id})" title="Dismiss Request" 
+                            style="position: absolute; top: 12px; right: 15px; background: none; border: none; color: #aaa; font-size: 20px; cursor: pointer; transition: color 0.2s; line-height: 1;"
+                            onmouseover="this.style.color='#dc2626'" onmouseout="this.style.color='#aaa'">
+                        &times;
+                    </button>
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; padding-right: 25px;">
+                        <strong style="color: #1e1b4b; font-size: 15px;">
+                            <i class="fa-solid fa-user" style="color: #6b7280; margin-right: 5px;"></i> ${req.first_name} ${req.last_name} 
+                            <span style="font-weight: normal; color: #666; font-size: 13px;">(${req.branch} • USN: ${req.usn})</span>
+                        </strong>
+                        <span style="font-size: 11px; color: #999;">${new Date(req.created_at).toLocaleDateString()}</span>
+                    </div>
+                    <p style="margin: 6px 0; font-size: 13px; color: #4f46e5; font-weight: 600;">
+                        <i class="fa-solid fa-bullseye" style="font-size: 12px;"></i> Focus Area: ${req.focus_area}
+                    </p>
+                    <p style="font-style: italic; font-size: 13.5px; color: #444; background: #ffffff; padding: 10px; border-left: 3px solid #4f46e5; margin: 8px 0; border-radius: 0 4px 4px 0; box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);">
+                        "${req.message}"
+                    </p>
+                    <div style="margin-top: 12px;">
+                        <a href="mailto:${req.email}?subject=APSCE Alumni Portal Mentorship Match&body=Hi ${req.first_name},%0D%0A%0D%0AI accepted your mentorship request regarding ${req.focus_area} on the Alumni Portal! Let's schedule a time to chat." 
+                           style="display: inline-block; padding: 7px 14px; background: #4f46e5; color: white; border-radius: 5px; text-decoration: none; font-size: 13px; font-weight: bold; transition: background 0.2s;">
+                            <i class="fa-solid fa-envelope"></i> Accept & Contact Student
+                        </a>
+                    </div>
+                </div>`;
+            container.insertAdjacentHTML('beforeend', rowHTML);
+        });
+
+    } catch (err) {
+        console.error("Inbox fault:", err);
+        container.innerHTML = `<p style="color: #dc2626; font-size: 13px; font-family: sans-serif;">Error fetching incoming student requests.</p>`;
+    }
+}
+
+async function dismissRequest(requestId) {
+    if (!confirm("Are you sure you want to clear this request?")) return;
+
+    const token = localStorage.getItem('alumniToken');
+
+    try {
+        const response = await fetch(`http://localhost:5000/api/request-mentorship/${requestId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (response.ok) {
+            const card = document.getElementById(`request-card-${requestId}`);
+            if (card) card.remove();
+
+            const container = document.getElementById('requestsNotificationContainer');
+            if (container.children.length === 0) {
+                container.innerHTML = `
+                    <p style="color: #777; font-size: 14px; text-align: center; padding: 10px 0; font-family: sans-serif;">
+                        <i class="fa-solid fa-circle-check" style="color: #10b981; margin-right: 5px;"></i> You are all caught up! No pending student requests.
+                    </p>`;
+            }
+        } else {
+            const result = await response.json();
+            alert("Error dismissing request: " + result.error);
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Failed to complete request removal.");
+    }
+}
+
+async function fetchMentors() {
+    const mentorGrid = document.getElementById('mentorGrid');
+    try {
+        const response = await fetch('http://localhost:5000/api/mentors');
+        if (!response.ok) throw new Error("API call error");
+        
+        const mentors = await response.json();
+        renderMentorCards(mentors);
+    } catch (err) {
+        console.error("Failed to compile active mentor logs:", err);
+        mentorGrid.innerHTML = `
+            <div style="text-align: center; width: 100%; grid-column: 1/-1; padding: 40px; color: red;">
+                <i class="fa-solid fa-circle-exclamation" style="font-size: 24px; margin-bottom: 10px;"></i>
+                <p>Could not safely pull the mentorship directory roster from backend services.</p>
+            </div>`;
+    }
+}
+
+function renderMentorCards(mentors) {
+    const mentorGrid = document.getElementById('mentorGrid');
+    mentorGrid.innerHTML = '';
+
+    if (mentors.length === 0) {
+        mentorGrid.innerHTML = `
+            <div style="text-align: center; width: 100%; grid-column: 1/-1; padding: 40px; color: #666;">
+                <p>No alumni profiles are currently marked open for mentoring. Check back later!</p>
+            </div>`;
+        return;
+    }
+
+    mentors.forEach(mentor => {
+        const fullName = `${mentor.first_name} ${mentor.last_name}`;
+        const companyInfo = mentor.designation && mentor.company ? `${mentor.designation} @ ${mentor.company}` : "Industry Professional";
+        const bioText = mentor.bio || "Passionate about helping students navigate their transition into the professional tech industry landscape.";
+        
+        const skillsArray = mentor.skills ? mentor.skills.split(',') : [];
+        const tagsHTML = skillsArray.map(skill => `<span class="tag">${skill.trim()}</span>`).join('');
+        const photoURL = mentor.profile_photo_path || `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=4f46e5&color=fff`;
+
+        const cardHTML = `
+            <div class="mentor-card" data-skills="${mentor.skills || ''}">
+                <div class="mentor-header">
+                    <img src="${photoURL}" alt="${fullName}" style="object-fit: cover; border-radius: 50%;">
+                    <div class="mentor-info">
+                        <h4>${fullName}</h4>
+                        <p>${companyInfo}</p>
+                    </div>
+                </div>
+                <div class="mentor-tags">
+                    ${tagsHTML}
+                </div>
+                <p class="bio">${bioText}</p>
+                <button class="request-btn" onclick="openMentorModal('request', '${fullName}')">Request Mentorship</button>
+            </div>`;
+        mentorGrid.insertAdjacentHTML('beforeend', cardHTML);
+    });
+}
+
+function filterMentors() {
+    const searchTerm = document.getElementById('mentorSearch').value.toLowerCase().trim();
+    const cards = document.querySelectorAll('.mentor-card');
+
+    cards.forEach(card => {
+        const name = card.querySelector('h4').innerText.toLowerCase();
+        const skills = card.getAttribute('data-skills').toLowerCase();
+        
+        const matchesSearch = !searchTerm || name.includes(searchTerm) || skills.includes(searchTerm);
+        
+        let matchesTab = false;
+        if (activeTabFilter === 'all') {
+            matchesTab = true;
+        } else {
+            const targetTag = activeTabFilter.toLowerCase();
+            matchesTab = skills.includes(targetTag);
+            
+            // Smart Abbreviation Fallbacks
+            if (targetTag === 'dsa' && (skills.includes('data structures') || skills.includes('algorithms'))) {
+                matchesTab = true;
+            }
+            if (targetTag === 'machine learning' && skills.includes('ml')) {
+                matchesTab = true;
+            }
+        }
+
+        if (matchesSearch && matchesTab) {
+            card.style.display = "block";
+        } else {
+            card.style.display = "none";
+        }
+    });
+}
+
+function filterByTag(tag, element) {
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    element.classList.add('active');
+    
+    activeTabFilter = tag;
+    filterMentors(); 
+}
+
+const modal = document.getElementById('mentorModal');
+const overlay = document.getElementById('modalOverlay');
+
+function openMentorModal(type, name = "") {
+    const title = document.getElementById('modalTitle');
+    if (type === 'become') {
+        title.innerText = "Become a Mentor";
+    } else {
+        title.innerText = `Request Mentorship from ${name}`;
+    }
+    
+    modal.classList.add('active');
+    overlay.classList.add('active');
+}
+
+function closeModal() {
+    modal.classList.remove('active');
+    overlay.classList.remove('active');
+}
+
+document.getElementById('mentorshipForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem('alumniToken'); 
+
+    if (!token) { alert("Session Expired: Please log in again to send requests."); return; }
+    
+    const requestData = {
+        mentorName: document.getElementById('modalTitle').innerText.replace('Request Mentorship from ', ''),
+        focusArea: document.getElementById('focusArea').value,
+        message: document.getElementById('mentorMessage').value
+    };
+
+    try {
+        const response = await fetch('http://localhost:5000/api/request-mentorship', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(requestData)
+        });
+
+        if (response.ok) {
+            alert("Success! Your request has been logged and delivered directly to the mentor.");
+            closeModal();
+            document.getElementById('mentorshipForm').reset();
+        } else {
+            const result = await response.json();
+            alert("Failed to submit request: " + result.error);
+        }
+    } catch (error) {
+        console.error(error);
+        alert("Failed to establish secure server communication pathways.");
+    }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery & Achievements | Alumni Portal</title>
+    <link rel="stylesheet" href="css/index3.css">
+    <link rel="stylesheet" href="css/Achivement.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div class="top-header">
+    <a href="index3.html" class="logo">
+        <i class="fa-solid fa-graduation-cap"></i> Alumni Portal
+    </a>
+    <div class="college-name">APS College of Engineering</div>
+    
+    <!-- KEPT EMPTY AS REQUESTED: No welcome message or logout button rendered visually -->
+    <div class="user-menu" id="userMenu"></div>
+</div>
+
+<div class="layout">
+    <aside class="sidebar">
+      <ul class="nav-links">
+        <li><a href="index3.html"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+        <li><a href="profile.html"><i class="fa-solid fa-user"></i> My Profile</a></li>
+        <li><a href="directory.html"><i class="fa-solid fa-users"></i> Alumni Directory</a></li>
+        <li><a href="Events.html"><i class="fa-solid fa-calendar-days"></i> Events & Reunions</a></li>
+        <li><a href="Achivement.html" class="active"><i class="fa-solid fa-trophy"></i> Achievements</a></li>
+        <li><a href="mentorship.html"><i class="fa-solid fa-handshake-angle"></i> Mentorship</a></li>
+        <li><a href="contact.html"><i class="fa-solid fa-envelope"></i> Contact Us</a></li>
+      </ul>
+    </aside>
+
+    <main class="content" style="padding: 30px; background-color: #f8fafc; flex: 1; height: calc(100vh - 60px); overflow-y: auto; box-sizing: border-box;">
+        <div class="gallery-header">
+            <div class="header-title-group">
+                <h2><i class="fa-solid fa-images"></i> Alumni Gallery</h2>
+                <p class="header-subtitle">Relive college memories and celebrate achievements.</p>
+            </div>
+            <button class="connect-btn" onclick="openUploadModal()">
+                <i class="fa-solid fa-cloud-arrow-up"></i> Upload Memory
+            </button>
+        </div>
+
+        <div class="gallery-grid" id="galleryGrid"></div>
+    </main>
+</div>
+
+<div id="modalOverlay" class="modal-overlay" onclick="closeUploadModal()"></div>
+<div id="uploadModal" class="modal">
+    <div class="modal-header">
+        <h2>Upload Achievement/Memory</h2>
+        <button class="close-icon-btn" onclick="closeUploadModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+        <form id="uploadForm" class="event-form">
+            <div class="field">
+                <label>Title / Achievement Name</label>
+                <input type="text" id="imgTitle" placeholder="e.g. Winner of Smart India Hackathon" required style="box-sizing: border-box; width: 100%;">
+            </div>
+            <div class="field" style="margin-top: 15px;">
+                <label>Category</label>
+                <select id="imgCategory" class="filter-dropdown" style="box-sizing: border-box; width: 100%; padding: 8px;">
+                    <option value="Campus">Campus Life</option>
+                    <option value="Events">Events</option>
+                    <option value="Reunions">Reunion</option>
+                    <option value="Hackathons">Hackathons</option>
+                </select>
+            </div>
+            <div class="field" style="margin-top: 15px;">
+                <label>Select Image</label>
+                <input type="file" id="imageInput" accept="image/*" required>
+                <img id="uploadPreview" src="" alt="Upload Preview" style="display:none; max-width:100%; margin-top:10px; border-radius:4px; max-height:200px; object-fit:contain;">
+            </div>
+            <div class="modal-footer" style="margin-top: 25px; text-align: right; display: flex; justify-content: flex-end; gap: 10px;">
+                <button type="button" class="btn-secondary" onclick="closeUploadModal()">Cancel</button>
+                <button type="submit" class="connect-btn">Upload to Gallery</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const modal = document.getElementById('uploadModal');
+    const overlay = document.getElementById('modalOverlay');
+    let base64ImageString = "";
+
+    // Silent route fallback handler if token verification fails entirely
+    function silentLogout() {
+        localStorage.removeItem('alumniToken');
+        localStorage.removeItem('alumniUser');
+        localStorage.removeItem('alumniUserName');
+        localStorage.removeItem('alumniUserRole');
+        window.location.href = 'login.html';
+    }
+
+    function openUploadModal() {
+        modal.classList.add('active');
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeUploadModal() {
+        modal.classList.remove('active');
+        overlay.classList.remove('active');
+        document.body.style.overflow = 'auto';
+        document.getElementById('uploadForm').reset();
+        document.getElementById('uploadPreview').style.display = 'none';
+        base64ImageString = "";
+    }
+
+    function viewImage(src) {
+        window.open(src, '_blank');
+    }
+
+    document.getElementById('imageInput').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.src = e.target.result;
+                
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    const MAX_WIDTH = 1200;
+                    const MAX_HEIGHT = 1200;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_WIDTH) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        }
+                    } else {
+                        if (height > MAX_HEIGHT) {
+                            width *= MAX_HEIGHT / height;
+                            height = MAX_HEIGHT;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx.drawImage(img, 0, 0, width, height);
+                    base64ImageString = canvas.toDataURL('image/jpeg', 0.7);
+                    
+                    const previewImg = document.getElementById('uploadPreview');
+                    previewImg.src = base64ImageString;
+                    previewImg.style.display = 'block';
+                };
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    async function loadGalleryContent() {
+        const token = localStorage.getItem('alumniToken'); 
+        if (!token) { window.location.href = 'login.html'; return; }
+
+        try {
+            const res = await fetch('http://localhost:5000/api/gallery', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (res.status === 401 || res.status === 403) {
+                silentLogout();
+                return;
+            }
+
+            const items = await res.json();
+            const grid = document.getElementById('galleryGrid');
+            grid.innerHTML = "";
+
+            if (!items || items.length === 0) {
+                grid.innerHTML = `<p class="empty-gallery-msg" style="grid-column: 1/-1; text-align: center; color: #64748b; padding: 40px; font-family: sans-serif;">No gallery postings uploaded yet.</p>`;
+                return;
+            }
+
+            items.forEach(card => {
+                // RESTORED FULL CONDITIONAL DELETION CHECK: Evaluated securely on your Express background engine row map
+                const galleryItemHTML = `
+                    <div class="gallery-item">
+                        ${card.can_delete ? `
+                            <button class="delete-icon-overlay" onclick="deleteMemoryItem(${card.image_id})" title="Delete Memory" style="position: absolute; top: 10px; right: 10px; background: rgba(239, 68, 68, 0.9); color: white; border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 5; transition: transform 0.2s;">
+                                <i class="fa-solid fa-trash" style="font-size: 14px;"></i>
+                            </button>
+                        ` : ''}
+                        <div class="image-wrapper">
+                            <img src="${card.image_url}" alt="${card.title}">
+                            <div class="image-overlay">
+                                <button onclick="viewImage('${card.image_url}')"><i class="fa-solid fa-expand"></i></button>
+                            </div>
+                        </div>
+                        <div class="gallery-info">
+                            <h4>${card.title}</h4>
+                            <p>${card.description ? card.description : `Category: ${card.category}`}</p>
+                        </div>
+                    </div>`;
+                grid.insertAdjacentHTML('beforeend', galleryItemHTML);
+            });
+
+        } catch (err) {
+            console.error("Gallery initialization failure:", err);
+        }
+    }
+
+    document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const token = localStorage.getItem('alumniToken'); 
+
+        if (!base64ImageString) {
+            alert("Please wait for image compression to complete.");
+            return;
+        }
+
+        const payload = {
+            title: document.getElementById('imgTitle').value,
+            category: document.getElementById('imgCategory').value,
+            description: `Category: ${document.getElementById('imgCategory').value}`,
+            image_url: base64ImageString
+        };
+
+        try {
+            const res = await fetch('http://localhost:5000/api/gallery', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                alert("Memory uploaded successfully!");
+                closeUploadModal();
+                loadGalleryContent();
+            } else if (res.status === 401 || res.status === 403) {
+                alert("Your session has expired. Redirecting to login page...");
+                silentLogout();
+            } else {
+                const errorResponse = await res.json();
+                alert("Upload Rejected: " + (errorResponse.error || "Server validation issue"));
+            }
+        } catch (err) {
+            console.error("Save memory failure:", err);
+            alert("Network connection error.");
+        }
+    });
+
+    async function deleteMemoryItem(imageId) {
+        if (!confirm("Are you sure you want to delete this memory?")) return;
+        const token = localStorage.getItem('alumniToken'); 
+
+        try {
+            const res = await fetch(`http://localhost:5000/api/gallery/${imageId}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (res.ok) {
+                alert("Memory removed successfully!");
+                loadGalleryContent();
+            } else {
+                const errorData = await res.json();
+                alert(errorData.error || "Failed to delete.");
+            }
+        } catch (err) {
+            console.error("Deletion connection failure:", err);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // SILENT ACCESS VERIFICATION LAYER: Runs validation without rendering text elements to top-header DOM grids
+        const token = localStorage.getItem('alumniToken'); 
+        if (!token) { 
+            window.location.href = 'login.html'; 
+            return; 
+        }
+        
+        loadGalleryContent();
+    });
+</script>
+</body>
+</html>

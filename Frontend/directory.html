@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alumni Directory | Alumni Portal</title>
+    <link class="styles" rel="stylesheet" href="css/directory.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div class="top-header">
+    <a href="index3.html" class="logo">
+        <i class="fa-solid fa-graduation-cap"></i> Alumni Portal
+    </a>
+    <div class="college-name" style="font-size: 20px; font-weight: bold; letter-spacing: 0.5px;">APS College of Engineering</div>
+    <div class="user-menu" id="userMenu"></div>
+</div>
+
+<div class="layout">
+    <aside class="sidebar">
+      <ul class="nav-links">
+        <li><a href="index3.html" style="font-size: 16px;"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+        <li><a href="profile.html" style="font-size: 16px;"><i class="fa-solid fa-user"></i> My Profile</a></li>
+        <li><a href="directory.html" class="active" style="font-size: 16px;"><i class="fa-solid fa-users"></i> Alumni Directory</a></li>
+        <li><a href="Events.html" style="font-size: 16px;"><i class="fa-solid fa-calendar-days"></i> Events & Reunions</a></li>
+        <li><a href="Achivement.html" style="font-size: 16px;"><i class="fa-solid fa-trophy"></i> Achievements</a></li>
+        <li><a href="mentorship.html" style="font-size: 16px;"><i class="fa-solid fa-handshake-angle"></i> Mentorship</a></li>
+        <li><a href="contact.html" style="font-size: 16px;"><i class="fa-solid fa-envelope"></i> Contact Us</a></li>
+      </ul>
+    </aside>
+
+    <div class="content directory-content">
+        <div class="directory-header">
+            <h2>Alumni Network Directory</h2>
+            <p>Connect with graduates, find industry peers, and explore professional profiles.</p>
+        </div>
+
+        <div class="search-filter-section">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="Search by name...">
+            </div>
+            
+            <div class="filter-group">
+                <select id="branchFilter" class="filter-dropdown">
+                    <option value="all">All Branches</option>
+                    <option value="CSE">Computer Science (CSE)</option>
+                    <option value="ECE">Electronics (ECE)</option>
+                    <option value="MECH">Mechanical (ME)</option>
+                </select>
+
+                <select id="yearFilter" class="filter-dropdown">
+                    <option value="all">All Years</option>
+                    <option value="2026">2026</option>
+                    <option value="2025">2025</option>
+                    <option value="2024">2024</option>
+                    <option value="2023">2023</option>
+                    <option value="2022">2022</option>
+<option value="2021">2021</option>
+<option value="2020">2020</option>
+<option value="2019">2019</option>
+<option value="2018">2018</option>
+<option value="2017">2017</option>
+<option value="2016">2016</option>
+<option value="2015">2015</option>
+<option value="2014">2014</option>
+<option value="2013">2013</option>
+<option value="2012">2012</option>
+<option value="2011">2011</option>
+<option value="2010">2010</option>
+<option value="2009">2009</option>
+<option value="2008">2008</option>
+<option value="2007">2007</option>
+<option value="2006">2006</option>
+<option value="2005">2005</option>
+<option value="2004">2004</option>
+<option value="2003">2003</option>
+<option value="2002">2002</option>
+<option value="2001">2001</option>
+<option value="2000">2000</option>
+
+                </select>
+            </div>
+        </div>
+
+        <div class="alumni-grid" id="alumniGrid">
+            <div style="text-align: center; width: 100%; grid-column: 1/-1; padding: 40px; color: #666;">
+                <i class="fa-solid fa-spinner fa-spin" style="font-size: 24px; margin-bottom: 10px;"></i>
+                <p>Loading active alumni network directory rosters...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const token = localStorage.getItem('alumniToken');
+    const user = JSON.parse(localStorage.getItem('alumniUser') || '{}');
+
+    // Silent Auth Guard
+    if (!token) { 
+        window.location.replace('login.html'); 
+        return; 
+    }
+
+    const userMenu = document.getElementById('userMenu');
+    if (userMenu) {
+        const savedName = localStorage.getItem('alumniUserName') || user.first_name || 'Member';
+        userMenu.innerHTML = `<span style="color: #ffffff; font-weight: 500;"><i class="fa-solid fa-user-circle"></i> Hi, ${savedName}</span>`;
+    }
+
+    const alumniGrid = document.getElementById('alumniGrid');
+    const searchInput = document.getElementById('searchInput');
+    const branchFilter = document.getElementById('branchFilter');
+    const yearFilter = document.getElementById('yearFilter');
+
+    let localAlumniCache = [];
+
+    // Fetches every registered alumnus profile from your server
+    async function fetchAlumniDirectory() {
+        try {
+            const response = await fetch('http://localhost:5000/api/alumni', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!response.ok) throw new Error("Could not load rosters.");
+            
+            localAlumniCache = await response.json();
+            renderAlumniCards(localAlumniCache);
+        } catch (error) {
+            console.error("Directory Load Error:", error);
+            alumniGrid.innerHTML = `
+                <div style="text-align: center; width: 100%; grid-column: 1/-1; padding: 40px; color: red;">
+                    <i class="fa-solid fa-circle-exclamation" style="font-size: 24px; margin-bottom: 10px;"></i>
+                    <p>Failed to populate active alumni directory.</p>
+                </div>`;
+        }
+    }
+
+    function renderAlumniCards(alumniList) {
+        alumniGrid.innerHTML = ''; 
+
+        if (alumniList.length === 0) {
+            alumniGrid.innerHTML = `
+                <div style="text-align: center; width: 100%; grid-column: 1/-1; padding: 40px; color: #666;">
+                    <p>No registered alumni profiles found.</p>
+                </div>`;
+            return;
+        }
+
+        alumniList.forEach(alumni => {
+            const fullName = `${alumni.first_name} ${alumni.last_name}`;
+            const isMentor = alumni.is_mentor == 1 || alumni.is_mentor === true;
+            
+            const designation = alumni.designation || "Alumni Member";
+            const company = alumni.company || "APSCE Network";
+            const location = alumni.work_location || "Not Specified";
+            
+            const skillsArray = alumni.skills ? alumni.skills.split(',') : ['Alumni'];
+            const skillsHTML = skillsArray.map(skill => `<span>${skill.trim()}</span>`).join('');
+
+            const photoURL = alumni.profile_photo_path || `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=4f46e5&color=fff`;
+
+            // Mentorship status tag shows on directory if they turned it on
+            const mentorBadgeHTML = isMentor 
+                ? `<div class="mentor-badge" style="background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; display: inline-flex; align-items: center; gap: 4px; margin-top: 5px;"><i class="fa-solid fa-handshake-angle"></i> Mentor</div>` 
+                : '';
+
+            const cardHTML = `
+                <div class="alumni-card" 
+                     data-name="${fullName.toLowerCase()}" 
+                     data-branch="${alumni.branch || ''}" 
+                     data-year="${alumni.passing_year || ''}"
+                     style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between;">
+                    <div class="card-header" style="display: flex; gap: 15px; align-items: center; margin-bottom: 15px;">
+                        <img src="${photoURL}" alt="${fullName}" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid #e2e8f0;">
+                        <div>
+                            <h3 style="margin: 0; color: #1e293b; font-size: 18px;">${fullName}</h3>
+                            <p style="margin: 2px 0 0 0; color: #64748b; font-size: 13px;">${alumni.branch || 'N/A'} • Class of ${alumni.passing_year || 'N/A'}</p>
+                            ${mentorBadgeHTML}
+                        </div>
+                    </div>
+                    <div class="card-body" style="margin-bottom: 15px; flex-grow: 1;">
+                        <div style="font-size: 14px; color: #334155; margin-bottom: 6px;"><i class="fa-solid fa-briefcase" style="color: #64748b;"></i> ${designation} at <strong>${company}</strong></div>
+                        <div style="font-size: 13px; color: #64748b; margin-bottom: 10px;"><i class="fa-solid fa-location-dot"></i> ${location}</div>
+                        <div class="card-skills" style="display: flex; flex-wrap: wrap; gap: 5px;">${skillsHTML}</div>
+                    </div>
+                    <div class="card-footer" style="display: flex; gap: 10px; border-top: 1px solid #f1f5f9; padding-top: 12px;">
+                        <a href="${alumni.linkedin_url || '#'}" target="_blank" class="social-link" ${!alumni.linkedin_url ? 'style="pointer-events: none; opacity: 0.4;"' : ''} style="flex: 1; text-align: center; background: #0a66c2; color: white; padding: 8px; border-radius: 4px; text-decoration: none; font-size: 13px; font-weight: 500;">
+                            <i class="fa-brands fa-linkedin"></i> LinkedIn
+                        </a>
+                        <button class="connect-btn" onclick="window.location.href='profile.html?id=${alumni.user_id}'" style="flex: 1; background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 8px; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 500;">
+                            View Profile
+                        </button>
+                    </div>
+                </div>
+            `;
+            alumniGrid.insertAdjacentHTML('beforeend', cardHTML);
+        });
+    }
+
+    function performFilter() {
+        const query = searchInput.value.toLowerCase().trim();
+        const branch = branchFilter.value;
+        const year = yearFilter.value;
+
+        const cards = document.querySelectorAll('.alumni-card');
+        
+        cards.forEach(card => {
+            const cardName = card.getAttribute('data-name');
+            const cardBranch = card.getAttribute('data-branch');
+            const cardYear = card.getAttribute('data-year');
+
+            const matchesSearch = !query || cardName.includes(query);
+            const matchesBranch = branch === 'all' || cardBranch === branch;
+            const matchesYear = year === 'all' || cardYear == year;
+
+            if (matchesSearch && matchesBranch && matchesYear) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+
+    searchInput.addEventListener('input', performFilter);
+    branchFilter.addEventListener('change', performFilter);
+    yearFilter.addEventListener('change', performFilter);
+
+    fetchAlumniDirectory();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,282 @@
+:root {
+    --header-bg: #140941;
+    --sidebar-bg: #112b5f;
+    --sidebar-hover: #1c3d82; 
+    --sidebar-active: #140941; 
+    --text-main: #ffffff;
+    --text-muted: #cbd5e1; 
+    --accent-color: #38bdf8; 
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+/* =========================================
+   TOP HEADER & LOGO STYLES
+   ========================================= */
+.top-header {
+    background: var(--header-bg);
+    color: white;
+    padding: 15px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 65px; /* Fixed height container to prevent layout gaps */
+}
+
+.logo { 
+    font-size: 24px; 
+    font-weight: 800; 
+    color: white; 
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+
+.logo i {
+    color: var(--accent-color); 
+    font-size: 28px;
+    margin-right: 10px;
+    transition: transform 0.3s ease;
+}
+
+.logo:hover {
+    color: white; 
+}
+
+.logo:hover i {
+    transform: scale(1.1) rotate(-5deg); 
+}
+
+.college-name { 
+    font-size: 18px; 
+}
+
+/* Auth Buttons Fixes */
+.auth-btns button {
+    padding: 6px 14px;
+    margin-left: 8px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.auth-btns button a {
+    text-decoration: none;
+    color: inherit; 
+    font-weight: bold;
+}
+
+.signup {
+    background: white;
+    color: var(--header-bg); 
+}
+
+/* =========================================
+   LAYOUT & SIDEBAR STYLES (Fixed Height & Alignment)
+   ========================================= */
+.layout {
+    display: flex;
+    height: calc(100vh - 65px); /* Subtracts header height to stretch seamlessly */
+    width: 100%;
+    overflow: hidden;
+    background-color: white;
+}
+
+.sidebar {
+    width: 280px; 
+    min-width: 280px;
+    background: var(--sidebar-bg); /* Restored original blue color */
+    padding-top: 25px; 
+    overflow-y: auto; 
+    transition: transform 0.3s ease;
+}
+
+.nav-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-links li {
+    margin-bottom: 20px; 
+}
+
+.nav-links a {
+    display: flex;
+    align-items: center;
+    padding: 14px 20px; 
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 17px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border-left: 4px solid transparent;
+}
+
+.nav-links a:hover {
+    background-color: var(--sidebar-hover);
+    color: var(--text-main);
+    border-left: 4px solid rgba(56, 189, 248, 0.5);
+}
+
+.nav-links a.active {
+    background-color: var(--sidebar-active);
+    color: var(--text-main);
+    border-left: 4px solid var(--accent-color);
+}
+
+.nav-links i {
+    width: 24px;
+    margin-right: 40px;
+    font-size: 1.1rem;
+    text-align: center;
+    font-weight: 900;
+}
+
+/* =========================================
+   CONTENT & IMAGE SLIDER STYLES
+   ========================================= */
+.content {
+    flex: 1;
+    height: 100%;
+    overflow: hidden;
+}
+
+.slider {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.slides {
+    position: absolute;
+    inset: 0;
+    background-size: cover;   
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+    background-color: white;  
+}
+
+.slides.active {
+    opacity: 1;
+}
+
+/* Overlay */
+.slider::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1;
+}
+
+/* Text Overlay Container */
+.slider-text {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-align: center;
+}
+
+/* Standard Sliding Animations */
+.animate-text {
+    font-size: 42px;
+    animation: fadeSlide 1.5s ease forwards;
+}
+
+.animate-sub {
+    font-size: 18px;
+    margin-top: 10px;
+    animation: fadeUp 2s ease forwards;
+}
+
+@keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Slider Dots Component */
+.dots {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    text-align: center;
+    z-index: 3;
+}
+
+.dots span {
+    height: 12px;
+    width: 12px;
+    background: white;
+    border-radius: 50%;
+    display: inline-block;
+    margin: 0 5px;
+    cursor: pointer;
+    opacity: 0.4;
+    transition: opacity 0.3s ease, transform 0.3s ease; /* Added fluid easing transitions */
+}
+
+.dots span:hover {
+    opacity: 0.8;
+}
+
+/* === NEW SPECIFIC FIX: Styles the indicator dot tracking active states === */
+.dots span.active {
+    opacity: 1 !important;
+    background-color: var(--accent-color) !important; /* Turns sky-blue when selected for a professional contrast */
+    transform: scale(1.2); /* Slightly enlarges active dot indicators */
+}
+
+/* =========================================
+   RESPONSIVE DESIGN (Mobile Friendly Updates)
+   ========================================= */
+@media (max-width: 768px) {
+    .college-name {
+        display: none; 
+    }
+
+    .layout {
+        position: relative;
+    }
+
+    .sidebar {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 10;
+        transform: translateX(-100%); 
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .animate-text { 
+        font-size: 28px; 
+    }
+    
+    .animate-sub {
+        font-size: 14px;
+        padding: 0 15px;
+    }
+}
