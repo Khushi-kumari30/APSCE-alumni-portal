@@ -29,31 +29,19 @@ A robust, full-stack web application designed for the **APS College of Engineeri
 To run this project locally, create a file named **`.env`** in your root directory and fill it with your own specific configuration details as shown below:
 
 ```env
-PORT=5000
-NODE_ENV=development
-
-# MySQL Database Configurations (Enter your own database details here)
 DB_HOST=localhost
-DB_USER=your_mysql_username
-DB_PASSWORD=your_mysql_password
-DB_NAME=alumni_portal_db
+DB_USER=root
+DB_PASS=database_password
+DB_NAME=db_name
 
-# Security Keys (Enter your own secret token key)
-JWT_SECRET=your_super_secret_jwt_key
+# Email Configuration (Nodemailer)
+EMAIL_USER=your email_id
+# Use the 16-character App Password, NOT your login password
+EMAIL_PASS=__________
 
-# Nodemailer Configuration (Enter your own email and 16-character App Password)
-# NOTE: Do NOT use your standard account login password for EMAIL_PASS.
-# Go to Google Account -> Security -> 2-Step Verification -> App Passwords to generate it.
-EMAIL_HOST=smtp.gmail.com
-EMAIL_PORT=465
-EMAIL_USER=your_email@gmail.com
-EMAIL_PASS=abcd1234efgh5678
 
-# LinkedIn Integration Credentials (Enter your own developer API keys)
-LINKEDIN_CLIENT_ID=your_linkedin_client_id
-LINKEDIN_CLIENT_SECRET=your_linkedin_client_secret
-LINKEDIN_REDIRECT_URI=http://localhost:5000/auth/linkedin/callback
-
+# Server Configuration
+PORT=5000
 ---
 
 ## 🚀 Key Features
