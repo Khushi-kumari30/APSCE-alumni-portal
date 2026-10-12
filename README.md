@@ -97,3 +97,9 @@ To start the backend server, run:
 ```bash
 npm install
 node server.js
+
+### Environment Setup
+Before starting the backend, create your `.env` file:
+```bash
+cd backend
+cp .env.example .env
